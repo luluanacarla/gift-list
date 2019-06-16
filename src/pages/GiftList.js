@@ -6,13 +6,10 @@ import {
   CardBody,
   CardTitle,
   CardText,
-  CardDeck,
-  CardImg,
-  CardSubtitle,
-  Button,
 } from 'reactstrap';
 import API from '../components/API/API';
 import Pagination from '../components/Pagination/Pagination';
+import CurrencyFormat from 'react-currency-format';
 
 class GiftList extends Component {
   constructor(props) {
@@ -28,11 +25,6 @@ class GiftList extends Component {
     };
 
     this.onChangePage = this.onChangePage.bind(this);
-
-    this.formatPrice = price => {
-      console.log(price);
-      return `R$${price.toFixed(2)}`;
-    };
 
     this.fetchProducts = () => {
       this.setState({ showSpinner: true });
@@ -76,7 +68,15 @@ class GiftList extends Component {
                   </CardTitle>
                   <CardText className="text-center">
                     {products.length} items with a total of{' '}
-                    {this.formatPrice(sum)}
+                    <CurrencyFormat
+                      value={sum}
+                      displayType={'text'}
+                      thousandSeparator={true}
+                      prefix={'R$'}
+                      decimalSeparator={','}
+                      thousandSeparator={'.'}
+                      decimalScale={2}
+                    />
                   </CardText>
                 </CardBody>
               </Card>,
@@ -94,7 +94,14 @@ class GiftList extends Component {
                           <h4 class="card-title">{item.name}</h4>
                           <p class="card-text">1 Unit</p>
                           <p class="card-text">
-                            {this.formatPrice(item.price)}
+                            <CurrencyFormat
+                              value={item.price}
+                              displayType={'text'}
+                              thousandSeparator={true}
+                              prefix={'R$'}
+                              decimalSeparator={','}
+                              thousandSeparator={'.'}
+                            />
                           </p>
                         </div>
                       </div>
