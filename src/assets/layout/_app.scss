@@ -12,3 +12,10 @@ body {
   position: relative;
   min-height: 100vh;
 }
+
+.app-header {
+  margin: inherit;
+  z-index: 1020;
+  height: $app-header-height;
+  line-height: $app-header-height;
+}

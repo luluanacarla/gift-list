@@ -1,3 +1,13 @@
 .blue-header {
-    background-color: $blue-header
+  background-color: $blue-header
+}
+
+.gray-subheader {
+  background-color: $gray;
+}
+
+.text-subheader {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
 }
