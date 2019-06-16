@@ -1,0 +1,14 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: auto;
+  min-height: 100%;
+  position: relative;
+}
+  
+.app-body {
+  position: relative;
+  min-height: 100vh;
+}
