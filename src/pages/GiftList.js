@@ -1,17 +1,29 @@
 import React, { Component } from 'react';
-import { Container, Spinner } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import API from '../../components/API/API';
+import {
+  Container,
+  Spinner,
+  Card,
+  CardBody,
+  CardTitle,
+  CardText,
+} from 'reactstrap';
+import API from '../components/API/API';
 
 class GiftList extends Component {
   constructor(props) {
     super(props);
 
-    this.API = new API();
+    this.API = API();
 
     this.state = {
       products: [],
       showSpinner: false,
+      sum: null,
+    };
+
+    this.formatPrice = price => {
+      console.log(price);
+      return `R$${price.toFixed(2)}`;
     };
 
     this.fetchProducts = () => {
@@ -20,6 +32,7 @@ class GiftList extends Component {
       this.API.get(endpoint).then(response => {
         this.setState({
           products: response.data,
+          sum: response.data.reduce((a, b) => a + (b['price'] || 0), 0),
           showSpinner: false,
         });
       });
@@ -30,14 +43,32 @@ class GiftList extends Component {
   }
 
   render() {
-    const { showSpinner } = this.state;
+    const { showSpinner, products, sum } = this.state;
     return (
       <Container fluid className="container-limited">
-        <div className9="box mt-5">
+        <div className="box mt-5">
           {showSpinner && (
             <div className="text-center">
               <Spinner color="primary" />
             </div>
+          )}
+          {!showSpinner && sum && (
+            <Card>
+              <div className="card-head"></div>
+              <div className="circle"></div>
+              <CardBody>
+                <CardTitle className="text-center">
+                  <h3>O Bêbe Nerd</h3>
+                </CardTitle>
+                <CardText className="text-center">
+                  {products.length} items with a total of{' '}
+                  {this.formatPrice(sum)}
+                </CardText>
+                <CardText>
+                  <small className="text-muted">Last updated 3 mins ago</small>
+                </CardText>
+              </CardBody>
+            </Card>
           )}
         </div>
       </Container>
