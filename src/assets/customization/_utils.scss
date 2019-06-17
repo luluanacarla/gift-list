@@ -6,6 +6,20 @@
   background-color: $blue-header
 }
 
+.blue-font {
+  color: $blue-header
+}
+
+.pink-btn {
+  background-color: $pink;
+  color: $white;
+}
+
+.pink-btn:hover {
+  color: $white;
+  background-color: $pink-hover
+}
+
 .gray-subheader {
   background-color: $gray;
 }

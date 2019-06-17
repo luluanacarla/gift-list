@@ -10,6 +10,11 @@ import {
   Col,
   Label,
   Input,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
 } from 'reactstrap';
 import API from '../components/API/API';
 import Pagination from '../components/Pagination/Pagination';
@@ -39,9 +44,12 @@ class GiftList extends Component {
       ],
       nameFilter: '',
       removedItems: [],
+      modal: false,
+      currentId: null,
     };
 
     this.onChangePage = this.onChangePage.bind(this);
+    this.toggle = this.toggle.bind(this);
 
     /**
      * Callback function to when user selects some value on Price.
@@ -107,11 +115,12 @@ class GiftList extends Component {
       });
     };
 
-    this.handleButtonClick = id => {
-      const { removedItems } = this.state;
-      removedItems.push(id);
+    this.handleButtonClick = () => {
+      const { removedItems, currentId } = this.state;
+      removedItems.push(currentId);
       this.setState({ removedItems: removedItems }, () => {
         localStorage.setItem('removedItems', removedItems);
+        this.toggle();
         this.fetchProducts();
       });
     };
@@ -129,6 +138,13 @@ class GiftList extends Component {
   onChangePage(pageOfItems) {
     // update state with new page of items
     this.setState({ pageOfItems: pageOfItems });
+  }
+
+  toggle(id) {
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+      currentId: id,
+    }));
   }
 
   render() {
@@ -162,6 +178,14 @@ class GiftList extends Component {
                   thousandSeparator={'.'}
                   decimalScale={2}
                 />
+              </CardText>
+              <CardText className="text-center">
+                <Button className="pink-btn"> I WANT THIS LIST!</Button>
+              </CardText>
+              <CardText className="text-center">
+                <small>
+                  You can give a unique name and choose a photo of yours.
+                </small>
               </CardText>
             </CardBody>
           </Card>
@@ -219,14 +243,14 @@ class GiftList extends Component {
                             />
                           </p>
                           <div className="text-center">
-                            <button
-                              className="btn btn-primary w-100"
-                              onClick={() => {
-                                this.handleButtonClick(item.id);
-                              }}
+                            <Button
+                              color="danger"
+                              className="w-100"
+                              onClick={() => this.toggle(item.id)}
                             >
+                              {' '}
                               <FontAwesomeIcon icon="trash-alt" /> Remove Item
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -238,6 +262,28 @@ class GiftList extends Component {
                   onChangePage={this.onChangePage}
                 />
               </div>
+              <Modal
+                isOpen={this.state.modal}
+                toggle={this.toggle}
+                className={this.props.className}
+                backdrop={this.state.backdrop}
+              >
+                <ModalHeader toggle={this.toggle}>Remove Item</ModalHeader>
+                <ModalBody>Are you sure you want to remove the item?</ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    onClick={() => {
+                      this.handleButtonClick();
+                    }}
+                  >
+                    Yes, remove!
+                  </Button>{' '}
+                  <Button color="secondary" onClick={this.toggle}>
+                    Cancel
+                  </Button>
+                </ModalFooter>
+              </Modal>
             </div>
           )}
         </div>
