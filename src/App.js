@@ -4,6 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import SubHeader from './layouts/SubHeader';
 import GiftList from './pages/GiftList';
+import Footer from './layouts/Footer';
 
 library.add(fas);
 
@@ -14,6 +15,7 @@ const App = () => (
     <div id="view" className="app-body">
       <GiftList />
     </div>
+    <Footer />
   </div>
 );
 
