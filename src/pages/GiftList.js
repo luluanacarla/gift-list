@@ -15,6 +15,7 @@ import API from '../components/API/API';
 import Pagination from '../components/Pagination/Pagination';
 import CurrencyFormat from 'react-currency-format';
 import Select from 'react-select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class GiftList extends Component {
   constructor(props) {
@@ -26,17 +27,18 @@ class GiftList extends Component {
       pageOfItems: [],
       defaultProducts: [],
       filteredProducts: [],
+      products: [],
       showSpinner: false,
-      sum: null,
-      selectedPrice: { value: 0, label: 'All' },
+      selectedPrice: { value: { min: 0, max: 0 }, label: 'All' },
       priceOptions: [
-        { value: 0, label: 'All' },
-        { value: 10, label: 'To R$10' },
-        { value: 25, label: 'To R$25' },
-        { value: 50, label: ' To R$50' },
-        { value: 100, label: 'To R$100' },
+        { value: { min: 0, max: 0 }, label: 'All' },
+        { value: { min: 0, max: 25 }, label: 'Under R$25' },
+        { value: { min: 25, max: 50 }, label: 'R$25 to R$50' },
+        { value: { min: 50, max: 100 }, label: 'R$50 to R$100' },
+        { value: { min: 100, max: 200 }, label: 'R$100 to R$200' },
       ],
       nameFilter: '',
+      removedItems: [],
     };
 
     this.onChangePage = this.onChangePage.bind(this);
@@ -47,18 +49,25 @@ class GiftList extends Component {
      * @param {Object} selectedPrice
      */
     this.handleChangeOnPrice = selectedPrice => {
-      const { defaultProducts } = this.state;
+      const { products } = this.state;
       this.setState({
         selectedPrice: selectedPrice,
       });
 
-      if (selectedPrice.value === 0)
-        return this.setState({ filteredProducts: defaultProducts });
+      if (selectedPrice.label === 'All')
+        return this.setState({ filteredProducts: products });
 
-      const newProducts = defaultProducts.filter(x => {
-        return x.price >= 0 && x.price <= selectedPrice.value;
+      const newProducts = products.filter(item => {
+        return (
+          item.price >= selectedPrice.value.min &&
+          item.price <= selectedPrice.value.max
+        );
       });
-      this.setState({ filteredProducts: newProducts, showSpinner: false });
+      this.setState({
+        filteredProducts: newProducts,
+        defaultProducts: newProducts,
+        showSpinner: false,
+      });
     };
 
     /**
@@ -81,20 +90,40 @@ class GiftList extends Component {
     };
 
     this.fetchProducts = () => {
+      const { removedItems } = this.state;
       this.setState({ showSpinner: true });
       const endpoint = '/1d8q55';
       this.API.get(endpoint).then(response => {
+        const defaultProducts = response.data.filter(
+          item => removedItems.indexOf(item.id) === -1
+        );
+
         this.setState({
-          defaultProducts: response.data,
-          filteredProducts: response.data,
-          sum: response.data.reduce((a, b) => a + (b['price'] || 0), 0),
+          products: defaultProducts,
+          defaultProducts: defaultProducts,
+          filteredProducts: defaultProducts,
           showSpinner: false,
         });
       });
     };
+
+    this.handleButtonClick = id => {
+      const { removedItems } = this.state;
+      removedItems.push(id);
+      this.setState({ removedItems: removedItems }, () => {
+        localStorage.setItem('removedItems', removedItems);
+        this.fetchProducts();
+      });
+    };
   }
   async componentDidMount() {
-    this.fetchProducts();
+    let removedItems = localStorage.getItem('removedItems')
+      ? localStorage.getItem('removedItems').split(',')
+      : [];
+    removedItems = removedItems.map(item => Number(item));
+    this.setState({ removedItems }, () => {
+      this.fetchProducts();
+    });
   }
 
   onChangePage(pageOfItems) {
@@ -106,7 +135,6 @@ class GiftList extends Component {
     const {
       showSpinner,
       filteredProducts,
-      sum,
       priceOptions,
       selectedPrice,
       nameFilter,
@@ -114,60 +142,60 @@ class GiftList extends Component {
     return (
       <Container fluid className="container-limited">
         <div className="box mt-5">
+          <Card>
+            <div className="card-head"></div>
+            <div className="circle"></div>
+            <CardBody className="card-body-top">
+              <CardTitle className="text-center">
+                <h3>O Bêbe Nerd</h3>
+              </CardTitle>
+              <CardText className="text-center">
+                {filteredProducts.length} items with a total of{' '}
+                <CurrencyFormat
+                  value={filteredProducts.reduce(
+                    (a, b) => a + (b['price'] || 0),
+                    0
+                  )}
+                  displayType={'text'}
+                  prefix={'R$'}
+                  decimalSeparator={','}
+                  thousandSeparator={'.'}
+                  decimalScale={2}
+                />
+              </CardText>
+            </CardBody>
+          </Card>
           {showSpinner && (
             <div className="text-center">
               <Spinner color="primary" />
             </div>
           )}
-          {!showSpinner &&
-            sum && [
-              <Card>
-                <div className="card-head"></div>
-                <div className="circle"></div>
-                <CardBody className="card-body-top">
-                  <CardTitle className="text-center">
-                    <h3>O Bêbe Nerd</h3>
-                  </CardTitle>
-                  <CardText className="text-center">
-                    {filteredProducts.length} items with a total of{' '}
-                    <CurrencyFormat
-                      value={sum}
-                      displayType={'text'}
-                      thousandSeparator={true}
-                      prefix={'R$'}
-                      decimalSeparator={','}
-                      thousandSeparator={'.'}
-                      decimalScale={2}
-                    />
-                  </CardText>
-                </CardBody>
-              </Card>,
-              <div className="box p-4">
-                <Row>
-                  <Col md={4}>
-                    <Label>Price Range</Label>
-                    <Select
-                      name="form-field-name"
-                      value={selectedPrice}
-                      onChange={this.handleChangeOnPrice}
-                      options={priceOptions}
-                      placeholder="Price Range"
-                      isClearable={false}
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                  </Col>
-                  <Col>
-                    <Label>Name</Label>
-                    <Input
-                      type="text"
-                      name="Name"
-                      value={nameFilter}
-                      onChange={this.handleInputChange}
-                    />
-                  </Col>
-                </Row>
-              </div>,
+          {!showSpinner && (
+            <div className="box p-4">
+              <Row>
+                <Col md={4}>
+                  <Label>Price Range</Label>
+                  <Select
+                    name="form-field-name"
+                    value={selectedPrice}
+                    onChange={this.handleChangeOnPrice}
+                    options={priceOptions}
+                    placeholder="Price Range"
+                    isClearable={false}
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                  />
+                </Col>
+                <Col>
+                  <Label>Name</Label>
+                  <Input
+                    type="text"
+                    name="Name"
+                    value={nameFilter}
+                    onChange={this.handleInputChange}
+                  />
+                </Col>
+              </Row>
               <div>
                 <div className="row">
                   {this.state.pageOfItems.map(item => (
@@ -176,45 +204,42 @@ class GiftList extends Component {
                         <img
                           className="card-img-top img-fluid"
                           src={item.image}
-                          alt="Card image cap"
+                          alt="Card cap"
                         />
                         <div className="card-body">
                           <h5 className="card-title">{item.name}</h5>
-                          <p className="card-text">1 Unit</p>
-                          <p class="card-text">
+                          <p className="card-text">
+                            1 Unit -{' '}
                             <CurrencyFormat
                               value={item.price}
                               displayType={'text'}
-                              thousandSeparator={true}
                               prefix={'R$'}
                               decimalSeparator={','}
                               thousandSeparator={'.'}
                             />
                           </p>
+                          <div className="text-center">
+                            <button
+                              className="btn btn-primary w-100"
+                              onClick={() => {
+                                this.handleButtonClick(item.id);
+                              }}
+                            >
+                              <FontAwesomeIcon icon="trash-alt" /> Remove Item
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                {/* <CardDeck>
-                {this.state.pageOfItems.map(item => (
-                <Card key={item.id}>
-                <CardImg top width="100%" src={item.image} alt="Card image cap" />
-                <CardBody>
-                    <CardTitle>{item.name}</CardTitle>
-                    <CardSubtitle>Card subtitle</CardSubtitle>
-                    <CardText>This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</CardText>
-                    <Button>Button</Button>
-                </CardBody>
-                </Card>
-              ))}
-            </CardDeck> */}
                 <Pagination
                   items={filteredProducts}
                   onChangePage={this.onChangePage}
                 />
-              </div>,
-            ]}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
     );
