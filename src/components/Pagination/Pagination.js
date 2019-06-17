@@ -101,7 +101,7 @@ class Pagination extends React.Component {
     }
 
     return (
-      <div>
+      <div className="mt-5">
         <ul className="pagination pagination-rounded justify-content-center mb-0">
           <li
             className={`page-item ${pager.currentPage === 1 ? 'disabled' : ''}`}
