@@ -49,7 +49,7 @@ class GiftList extends Component {
         { value: 'name asc', label: 'Name asc' },
         { value: 'name desc', label: 'Name desc' },
         { value: 'price asc', label: 'Price asc' },
-        { value: 'price desc', label: 'Price Desc' },
+        { value: 'price desc', label: 'Price desc' },
       ],
       removedItems: [],
       modal: false,
@@ -297,7 +297,7 @@ class GiftList extends Component {
                 <Col md={3}>
                   <Label>&ensp;</Label>
                   <Button
-                    className="d-block"
+                    className="d-block pink-btn"
                     onClick={() => this.fetchProducts()}
                   >
                     Filter
