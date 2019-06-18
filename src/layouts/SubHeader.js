@@ -29,7 +29,7 @@ class SubHeader extends Component {
           <Col>
             <div className="text-subheader">
               <h4>Step 2</h4>
-              <small className="d-block">Descição da etapa 2</small>
+              <small className="d-block">Choose from our list</small>
             </div>
           </Col>
           <Col>

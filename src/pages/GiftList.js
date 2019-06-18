@@ -144,31 +144,6 @@ class GiftList extends Component {
             return 0;
           });
 
-        var items = [
-          { name: 'Edward', value: 21 },
-          { name: 'Sharpe', value: 37 },
-          { name: 'And', value: 45 },
-          { name: 'The', value: -12 },
-          { name: 'Magnetic', value: 13 },
-          { name: 'Zeros', value: 37 },
-        ];
-
-        items.sort(function(a, b) {
-          var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-          var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-
-          // names must be equal
-          return 0;
-        });
-
-        console.log(items);
-
         this.setState({
           defaultProducts: newProducts,
           filteredProducts: newProducts,
@@ -225,7 +200,7 @@ class GiftList extends Component {
             <div className="circle"></div>
             <CardBody className="card-body-top">
               <CardTitle className="text-center">
-                <h3 className="blue-font">O Bêbe Nerd</h3>
+                <h3 className="blue-font">The Nerd Baby</h3>
               </CardTitle>
               <CardText className="text-center">
                 {filteredProducts.length} items with a total of{' '}
@@ -251,59 +226,65 @@ class GiftList extends Component {
               </CardText>
             </CardBody>
           </Card>
-          {showSpinner && (
-            <div className="text-center">
-              <Spinner color="primary" />
-            </div>
-          )}
-          {!showSpinner && (
-            <div className="box p-4">
-              <Row>
-                <Col md={3}>
-                  <Label>Order</Label>
-                  <Select
-                    name="form-field-name"
-                    value={params.selectedOrder}
-                    onChange={this.handleChangeOnOrder}
-                    options={orderOptions}
-                    placeholder="Order"
-                    isClearable={false}
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
-                </Col>
-                <Col md={3}>
-                  <Label>Price Range</Label>
-                  <Select
-                    name="form-field-name"
-                    value={params.selectedPrice}
-                    onChange={this.handleChangeOnPrice}
-                    options={priceOptions}
-                    placeholder="Price Range"
-                    isClearable={false}
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
-                </Col>
-                <Col md={3}>
-                  <Label>Name</Label>
-                  <Input
-                    type="text"
-                    name="Name"
-                    value={params.nameFilter}
-                    onChange={this.handleInputChange}
-                  />
-                </Col>
-                <Col md={3}>
-                  <Label>&ensp;</Label>
-                  <Button
-                    className="d-block pink-btn"
-                    onClick={() => this.fetchProducts()}
-                  >
-                    Filter
-                  </Button>
-                </Col>
-              </Row>
+          <div className="box p-4">
+            <Row>
+              <Col md={3}>
+                <Label>Order</Label>
+                <Select
+                  name="form-field-name"
+                  value={params.selectedOrder}
+                  onChange={this.handleChangeOnOrder}
+                  options={orderOptions}
+                  placeholder="Order"
+                  isClearable={false}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </Col>
+              <Col md={3}>
+                <Label>Price Range</Label>
+                <Select
+                  name="form-field-name"
+                  value={params.selectedPrice}
+                  onChange={this.handleChangeOnPrice}
+                  options={priceOptions}
+                  placeholder="Price Range"
+                  isClearable={false}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </Col>
+              <Col md={3}>
+                <Label>Name</Label>
+                <Input
+                  type="text"
+                  name="Name"
+                  value={params.nameFilter}
+                  onChange={this.handleInputChange}
+                />
+              </Col>
+              <Col md={3}>
+                <Label>&ensp;</Label>
+                <Button
+                  className="d-block pink-btn"
+                  onClick={() => this.fetchProducts()}
+                >
+                  Filter
+                </Button>
+              </Col>
+            </Row>
+            {showSpinner && (
+              <div className="text-center mt-5">
+                <Spinner color="primary" />
+              </div>
+            )}
+
+            {!showSpinner && filteredProducts.length === 0 && (
+              <div className="text-center mt-5">
+                <h3>Nothing to show</h3>
+              </div>
+            )}
+            {!showSpinner && filteredProducts.length > 0 && (
               <div className="mt-5">
                 <div className="row">
                   {this.state.pageOfItems.map(item => (
@@ -345,30 +326,30 @@ class GiftList extends Component {
                   onChangePage={this.onChangePage}
                 />
               </div>
-              <Modal
-                isOpen={this.state.modal}
-                toggle={this.toggle}
-                className={this.props.className}
-                backdrop={this.state.backdrop}
-              >
-                <ModalHeader toggle={this.toggle}>Remove Item</ModalHeader>
-                <ModalBody>Are you sure you want to remove the item?</ModalBody>
-                <ModalFooter>
-                  <Button
-                    color="danger"
-                    onClick={() => {
-                      this.handleButtonClick();
-                    }}
-                  >
-                    Yes, remove!
-                  </Button>{' '}
-                  <Button color="secondary" onClick={this.toggle}>
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </Modal>
-            </div>
-          )}
+            )}
+            <Modal
+              isOpen={this.state.modal}
+              toggle={this.toggle}
+              className={this.props.className}
+              backdrop={this.state.backdrop}
+            >
+              <ModalHeader toggle={this.toggle}>Remove Item</ModalHeader>
+              <ModalBody>Are you sure you want to remove the item?</ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    this.handleButtonClick();
+                  }}
+                >
+                  Yes, remove!
+                </Button>{' '}
+                <Button color="secondary" onClick={this.toggle}>
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </Modal>
+          </div>
         </div>
       </Container>
     );
