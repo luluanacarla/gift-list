@@ -18,4 +18,12 @@ Para a estruturação das pastas, sempre escolho por separar o estilo do projeto
 
 Para a customização, escolhi o [reactstrap](https://reactstrap.github.io/) que é uma library de components utilizando o Boostrap 4. Possui muitos componentes úteis como Spinner, Table, Row, Col.
 
+## Geral
+
+- Padrões de desenvolvimento: DRY e KISS;
+- Formatação de código com [Prettier](https://prettier.io/);
+- Deploy com [now](https://zeit.co/now);
+- Commites: Utilização do [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
+  na mensagem do commit
+
 OBS: Mudei um pouco do que estava no layout original, na parte do subheader, pois achei que daquele jeito não ficaria legal em telas menores. Tente pensar em uma tela totalmente responsiva.
