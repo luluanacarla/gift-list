@@ -297,25 +297,30 @@ class GiftList extends Component {
                         />
                         <div className="card-body">
                           <h5 className="card-title">{item.name}</h5>
-                          <p className="card-text">
-                            1 Unit -{' '}
-                            <CurrencyFormat
-                              value={item.price}
-                              displayType={'text'}
-                              prefix={'R$'}
-                              decimalSeparator={','}
-                              thousandSeparator={'.'}
-                            />
-                          </p>
+                          <p className="card-text">1 Unit</p>
                         </div>
                         <div className="card-footer">
-                          <Button
-                            color="danger"
-                            onClick={() => this.toggle(item.id)}
-                          >
-                            {' '}
-                            <FontAwesomeIcon icon="trash-alt" />
-                          </Button>
+                          <Row>
+                            <Col md={6}>
+                              <Button
+                                color="danger"
+                                onClick={() => this.toggle(item.id)}
+                              >
+                                {' '}
+                                <FontAwesomeIcon icon="trash-alt" />
+                              </Button>
+                            </Col>
+                            <Col md={6} className="text-center m-auto">
+                              <CurrencyFormat
+                                value={item.price}
+                                displayType={'text'}
+                                prefix={'R$'}
+                                decimalSeparator={','}
+                                thousandSeparator={'.'}
+                                className="price-font"
+                              />
+                            </Col>
+                          </Row>
                         </div>
                       </div>
                     </div>
